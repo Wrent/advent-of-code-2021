@@ -2,7 +2,6 @@ module Main exposing (..)
 
 import Browser
 import Html exposing (Html, div, text)
-import List.Extra
 
 
 main =
@@ -73,17 +72,12 @@ processTuple tuple =
 listToNeighbouringTuples : List Int -> Int -> Int -> ( Int, Int )
 listToNeighbouringTuples list index _ =
     let
-        a : Maybe Int
-        a =
-            List.Extra.getAt index list
-
-        b : Maybe Int
-        b =
-            List.Extra.getAt (index + 1) list
+        sublist =
+            List.take 2 <| List.drop index list
     in
-    case ( a, b ) of
-        ( Just x, Just y ) ->
-            ( x, y )
+    case sublist of
+        a :: b :: _ ->
+            ( a, b )
 
         _ ->
             ( 0, 0 )
@@ -92,26 +86,18 @@ listToNeighbouringTuples list index _ =
 listToNeighbouringWindows : List Int -> Int -> Int -> ( Int, Int )
 listToNeighbouringWindows list index _ =
     let
-        a : Maybe Int
-        a =
-            List.Extra.getAt index list
+        sublistA : List Int
+        sublistA =
+            List.take 3 <| List.drop index list
 
-        b : Maybe Int
-        b =
-            List.Extra.getAt (index + 1) list
-
-        c : Maybe Int
-        c =
-            List.Extra.getAt (index + 2) list
-
-        d : Maybe Int
-        d =
-            List.Extra.getAt (index + 3) list
+        sublistB : List Int
+        sublistB =
+            List.take 3 <| List.drop (index + 1) list
     in
-    case ( a, b, c ) of
-        ( Just x, Just y, Just z ) ->
-            case d of
-                Just w ->
+    case sublistA of
+        x :: y :: z :: _ ->
+            case sublistB of
+                _ :: _ :: w :: _ ->
                     ( x + y + z, y + z + w )
 
                 _ ->
