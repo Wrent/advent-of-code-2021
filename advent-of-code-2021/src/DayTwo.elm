@@ -1,26 +1,28 @@
-module DayTwo exposing (day2part1)
+module DayTwo exposing (day2part1, day2part2)
+
+
+day2 : (Command -> SubmarinePosition -> SubmarinePosition) -> Maybe Int
+day2 apply =
+    String.split "\n" day2Input
+        |> List.filterMap parseCommand
+        |> List.foldl apply initialSubmarinePosition
+        |> getResult
+        |> Just
 
 
 day2part1 : Maybe Int
 day2part1 =
-    String.split "\n" day2Input
-        |> List.filterMap parseCommand
-        |> List.foldl applyCommand initialSubmarinePosition
-        |> getResult
-        |> Just
+    day2 applyCommand
+
+
+day2part2 : Maybe Int
+day2part2 =
+    day2 applyCommand2
 
 
 getResult : SubmarinePosition -> Int
 getResult pos =
     pos.horizontal * pos.depth
-
-
-
---
---
---day1part2 : Maybe Int
---day1part2 =
---    day1 listToNeighbouringWindows
 
 
 parseCommand : String -> Maybe Command
@@ -61,13 +63,26 @@ applyCommand : Command -> SubmarinePosition -> SubmarinePosition
 applyCommand command position =
     case command of
         Forward steps ->
-            SubmarinePosition position.depth (position.horizontal + steps)
+            SubmarinePosition position.depth (position.horizontal + steps) position.aim
 
         Down steps ->
-            SubmarinePosition (position.depth + steps) position.horizontal
+            SubmarinePosition (position.depth + steps) position.horizontal position.aim
 
         Up steps ->
-            SubmarinePosition (position.depth - steps) position.horizontal
+            SubmarinePosition (position.depth - steps) position.horizontal position.aim
+
+
+applyCommand2 : Command -> SubmarinePosition -> SubmarinePosition
+applyCommand2 command position =
+    case command of
+        Forward steps ->
+            SubmarinePosition (position.depth + (position.aim * steps)) (position.horizontal + steps) position.aim
+
+        Down steps ->
+            SubmarinePosition position.depth position.horizontal (position.aim + steps)
+
+        Up steps ->
+            SubmarinePosition position.depth position.horizontal (position.aim - steps)
 
 
 type Command
@@ -79,12 +94,13 @@ type Command
 type alias SubmarinePosition =
     { depth : Int
     , horizontal : Int
+    , aim : Int
     }
 
 
 initialSubmarinePosition : SubmarinePosition
 initialSubmarinePosition =
-    SubmarinePosition 0 0
+    SubmarinePosition 0 0 0
 
 
 day2Input : String
