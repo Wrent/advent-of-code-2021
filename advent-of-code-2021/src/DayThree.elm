@@ -1,11 +1,12 @@
-module DayThree exposing (day3part1)
+module DayThree exposing (day3part1, day3part2)
 
 import Binary
 import List.Extra
+import Maybe.Extra
 
 
-day3part1 : Maybe Int
-day3part1 =
+day3 : (List (List Char) -> Int) -> (List (List Char) -> Int) -> Maybe Int
+day3 fnA fnB =
     let
         binaryInput : List String
         binaryInput =
@@ -15,7 +16,17 @@ day3part1 =
         charGroups =
             List.range 0 11 |> List.map (getCharGroup binaryInput)
     in
-    Just <| getGammaRate charGroups * getEpsilonRate charGroups
+    Just <| fnA charGroups * fnB charGroups
+
+
+day3part1 : Maybe Int
+day3part1 =
+    day3 getGammaRate getEpsilonRate
+
+
+day3part2 : Maybe Int
+day3part2 =
+    day3 getOxygenGeneratorRating getCo2ScrubberRating
 
 
 getGammaRate : List (List Char) -> Int
@@ -26,6 +37,65 @@ getGammaRate input =
 getEpsilonRate : List (List Char) -> Int
 getEpsilonRate input =
     getRate input getEpsilonChar
+
+
+getOxygenGeneratorRating : List (List Char) -> Int
+getOxygenGeneratorRating input =
+    getRating input (\a b -> a >= b)
+
+
+getCo2ScrubberRating : List (List Char) -> Int
+getCo2ScrubberRating input =
+    getRating input (\a b -> a < b)
+
+
+getRating : List (List Char) -> (Int -> Int -> Bool) -> Int
+getRating input fn =
+    List.range 0 11
+        |> List.foldl (processGroup fn) input
+        |> List.concat
+        |> List.map charToBool
+        |> Binary.fromBooleans
+        |> Binary.toDecimal
+
+
+charToBool : Char -> Bool
+charToBool char =
+    if char == '1' then
+        True
+
+    else
+        False
+
+
+processGroup : (Int -> Int -> Bool) -> Int -> List (List Char) -> List (List Char)
+processGroup fn index input =
+    if (List.length <| Maybe.withDefault [] <| List.head input) == 1 then
+        input
+
+    else
+        let
+            mostCommon : Bool
+            mostCommon =
+                getCorrectChar (List.Extra.getAt index input |> Maybe.withDefault []) fn
+
+            indexesSameAsMostCommon : List Int
+            indexesSameAsMostCommon =
+                List.Extra.getAt index input
+                    |> Maybe.withDefault []
+                    |> List.Extra.findIndices (\x -> hasSameBitAsMostCommon mostCommon x)
+        in
+        List.map (removeIndexes indexesSameAsMostCommon) input
+
+
+removeIndexes : List Int -> List Char -> List Char
+removeIndexes indexes input =
+    List.Extra.removeIfIndex (\i -> List.Extra.find (\x -> x == i) indexes |> Maybe.Extra.isNothing) input
+
+
+hasSameBitAsMostCommon : Bool -> Char -> Bool
+hasSameBitAsMostCommon bit char =
+    charToBool char == bit
 
 
 getRate : List (List Char) -> (List Char -> Bool) -> Int
