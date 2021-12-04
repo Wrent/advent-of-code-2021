@@ -1,25 +1,35 @@
-module DayFour exposing (day4part1)
+module DayFour exposing (day4part1, day4part2)
 
 import Dict exposing (Dict)
 import List.Extra
 
 
-day4part1 : Maybe Int
-day4part1 =
+day4 : (Int -> ( List BingoBoard, Int ) -> ( List BingoBoard, Int )) -> Maybe Int
+day4 fn =
     String.split "\n\n" day4Input
         |> parseInput
-        |> processInput
+        |> processInput fn
         |> Just
 
 
-processInput : ( List Int, List BingoBoard ) -> Int
-processInput input =
+day4part1 : Maybe Int
+day4part1 =
+    day4 draw
+
+
+day4part2 : Maybe Int
+day4part2 =
+    day4 draw2
+
+
+processInput : (Int -> ( List BingoBoard, Int ) -> ( List BingoBoard, Int )) -> ( List Int, List BingoBoard ) -> Int
+processInput fn input =
     let
         ( drawOrder, boards ) =
             input
 
         ( _, result ) =
-            List.foldl draw ( boards, -1 ) drawOrder
+            List.foldl fn ( boards, -1 ) drawOrder
     in
     result
 
@@ -35,6 +45,24 @@ draw drawn input =
 
         nextResult =
             getResult result nextBoards drawn
+    in
+    ( nextBoards, nextResult )
+
+
+draw2 : Int -> ( List BingoBoard, Int ) -> ( List BingoBoard, Int )
+draw2 drawn input =
+    let
+        ( boards, result ) =
+            input
+
+        resultingBoards =
+            markDrawn drawn boards
+
+        nextResult =
+            getResult2 result resultingBoards drawn
+
+        nextBoards =
+            List.filter (\b -> not <| isWinning b) resultingBoards
     in
     ( nextBoards, nextResult )
 
@@ -55,6 +83,20 @@ getResult oldResult boards drawn =
 
             Nothing ->
                 -1
+
+
+getResult2 : Int -> List BingoBoard -> Int -> Int
+getResult2 oldResult boards drawn =
+    let
+        winningBoard =
+            List.head boards
+    in
+    case winningBoard of
+        Just board ->
+            sumUnmarked board * drawn
+
+        Nothing ->
+            oldResult
 
 
 getWinningBoard : List BingoBoard -> Maybe BingoBoard
