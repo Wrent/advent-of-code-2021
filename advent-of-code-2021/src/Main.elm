@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Browser
 import DayFour
+import DaySix
 import Html exposing (Html, div, text)
 
 
@@ -43,7 +44,7 @@ update msg model =
 
 view : Model -> Html Msg
 view _ =
-    print "4" DayFour.day4part1 DayFour.day4part2
+    print "6" DaySix.day6part1 DayFour.day4part2
 
 
 print : String -> Maybe Int -> Maybe Int -> Html Msg
