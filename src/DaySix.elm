@@ -1,30 +1,36 @@
-module DaySix exposing (day6part1)
+module DaySix exposing (day6part1, day6part2)
+
+
+day6 : Int -> Maybe Int
+day6 rounds =
+    String.split "," day6Test
+        |> List.filterMap String.toInt
+        |> List.map (calculateOffspring rounds)
+        |> List.sum
+        |> Just
 
 
 day6part1 : Maybe Int
 day6part1 =
-    String.split "," day6Input
-        |> List.filterMap String.toInt
-        |> spawn
-        |> List.length
-        |> Just
+    day6 80
 
 
-spawn : List Int -> List Int
-spawn input =
-    List.foldl getNext input <| List.range 0 79
+day6part2 : Maybe Int
+day6part2 =
+    day6 256
 
 
-getNext : Int -> List Int -> List Int
-getNext _ prev =
+calculateOffspring : Int -> Int -> Int
+calculateOffspring rounds remaining =
     let
-        withoutZeros =
-            List.filter (\x -> x /= 0) prev |> List.map (\x -> x - 1)
-
-        zerosCnt =
-            List.length prev - List.length withoutZeros
+        newRounds =
+            rounds - remaining
     in
-    withoutZeros ++ List.repeat zerosCnt 6 ++ List.repeat zerosCnt 8
+    if newRounds <= 0 then
+        0
+
+    else
+        (newRounds // 7) + calculateOffspring newRounds 8
 
 
 day6Test : String

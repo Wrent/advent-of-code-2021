@@ -44,7 +44,7 @@ update msg model =
 
 view : Model -> Html Msg
 view _ =
-    print "6" DaySix.day6part1 DayFour.day4part2
+    print "6" DaySix.day6part1 DaySix.day6part2
 
 
 print : String -> Maybe Int -> Maybe Int -> Html Msg
