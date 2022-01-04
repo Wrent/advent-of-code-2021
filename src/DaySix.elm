@@ -1,20 +1,48 @@
-module DaySix exposing (day6, day6Input, day6Test, day6part1, day6part2, getChildren)
-
-import Dict exposing (Dict)
+module DaySix exposing (day6, day6Input, day6Test, day6part1, day6part2)
 
 
 day6 : Int -> String -> Maybe Int
 day6 rounds input =
     let
-        res : List Int
-        res =
+        vector : List Int
+        vector =
             String.split "," input
                 |> List.filterMap String.toInt
-                |> List.map (calculateOffspring rounds Dict.empty)
+                |> parseVector
+
+        _ =
+            Debug.log "vector" vector
     in
-    res
-        |> List.sum
+    List.range 1 rounds
+        |> List.foldl processRound vector
+        |> getResult
         |> Just
+
+
+parseVector : List Int -> List Int
+parseVector list =
+    List.range 0 8
+        |> List.map (countOccurrences list)
+
+
+countOccurrences : List Int -> Int -> Int
+countOccurrences list x =
+    List.filter (\a -> a == x) list |> List.length
+
+
+processRound : Int -> List Int -> List Int
+processRound _ vector =
+    case vector of
+        zero :: one :: two :: three :: four :: five :: six :: seven :: eight ->
+            one :: two :: three :: four :: five :: six :: seven + zero :: eight ++ [ zero ]
+
+        _ ->
+            []
+
+
+getResult : List Int -> Int
+getResult vector =
+    List.sum vector
 
 
 day6part1 : Maybe Int
@@ -25,39 +53,6 @@ day6part1 =
 day6part2 : Maybe Int
 day6part2 =
     day6 256 day6Input
-
-
-calculateOffspring : Int -> Dict ( Int, Int ) Int -> Int -> Int
-calculateOffspring rounds dict remaining =
-    let
-        newRounds =
-            rounds - (remaining + 1)
-
-        children =
-            getChildren rounds remaining
-    in
-    let
-        childrenSum : Int
-        childrenSum =
-            List.range 0 (children - 1) |> List.map (\x -> calculateOffspring (newRounds - (7 * x)) dict 8) |> List.sum
-
-        res =
-            1 + childrenSum
-    in
-    res
-
-
-getChildren : Int -> Int -> Int
-getChildren rounds remaining =
-    let
-        newRounds =
-            rounds - (remaining + 1)
-    in
-    if newRounds >= 0 then
-        1 + (newRounds // 7)
-
-    else
-        0
 
 
 day6Test : String

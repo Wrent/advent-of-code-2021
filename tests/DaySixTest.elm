@@ -41,42 +41,11 @@ suite =
                 \_ -> DaySix.day6 18 "1" |> Expect.equal (Just 7)
             , test "18 simple 2" <|
                 \_ -> DaySix.day6 18 "2" |> Expect.equal (Just 5)
-            , only <|
-                test "80" <|
-                    \_ -> DaySix.day6 80 DaySix.day6Test |> Expect.equal (Just 5934)
+            , test "80" <|
+                \_ -> DaySix.day6 80 DaySix.day6Test |> Expect.equal (Just 5934)
             , test "256" <|
                 \_ -> DaySix.day6 256 DaySix.day6Test |> Expect.equal (Just 26984457539)
             , test "part1" <|
                 \_ -> DaySix.day6 80 DaySix.day6Input |> Expect.equal (Just 350605)
-            ]
-        , describe "get children"
-            [ test "rounds 8, rem 1" <|
-                \_ -> DaySix.getChildren 8 1 |> Expect.equal 1
-            , test "rounds 8, rem 2" <|
-                \_ -> DaySix.getChildren 8 2 |> Expect.equal 1
-            , test "rounds 3, rem 2" <|
-                \_ -> DaySix.getChildren 3 2 |> Expect.equal 1
-            , test "rounds 2, rem 2" <|
-                \_ -> DaySix.getChildren 2 2 |> Expect.equal 0
-            , test "rounds 80, rem 1" <|
-                \_ -> DaySix.getChildren 80 1 |> Expect.equal 12
-            , test "rounds 80, rem 2" <|
-                \_ -> DaySix.getChildren 80 2 |> Expect.equal 12
-            , test "rounds 80, rem 3" <|
-                \_ -> DaySix.getChildren 80 3 |> Expect.equal 11
-            , test "rounds 80, rem 4" <|
-                \_ -> DaySix.getChildren 80 4 |> Expect.equal 11
-            , test "rounds 1, rem 1" <|
-                \_ -> DaySix.getChildren 1 1 |> Expect.equal 0
-            , test "rounds 2, rem 1" <|
-                \_ -> DaySix.getChildren 2 1 |> Expect.equal 1
-            , test "rounds 9, rem 1" <|
-                \_ -> DaySix.getChildren 9 1 |> Expect.equal 2
-            , test "rounds 15, rem 1" <|
-                \_ -> DaySix.getChildren 15 1 |> Expect.equal 2
-            , test "rounds 16, rem 1" <|
-                \_ -> DaySix.getChildren 16 1 |> Expect.equal 3
-            , test "rounds 18, rem 1" <|
-                \_ -> DaySix.getChildren 18 1 |> Expect.equal 3
             ]
         ]
