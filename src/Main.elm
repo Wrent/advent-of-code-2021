@@ -1,7 +1,6 @@
 module Main exposing (..)
 
 import Browser
-import DayFour
 import DaySix
 import Html exposing (Html, div, text)
 
